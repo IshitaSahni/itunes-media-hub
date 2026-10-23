@@ -2,11 +2,13 @@
 "use strict";
 
 // =============================================
-// ITUNES MEDIA HUB — VANILLA JAVASCRIPT
-// Complete through Step 5.6
+// ITUNES ALL-IN-ONE MEDIA HUB
+// VANILLA JAVASCRIPT — COMPLETE THROUGH 5.7
 // =============================================
 
+// =============================================
 // 1. CONFIGURATION
+// =============================================
 
 const API_BASE = "https://itunes.apple.com/search";
 const SEARCH_LIMIT = 24;
@@ -43,7 +45,9 @@ const MEDIA_CATEGORIES = {
   }
 };
 
+// =============================================
 // 2. DOM ELEMENTS
+// =============================================
 
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
@@ -64,20 +68,38 @@ const benchmarkDrawer =
 const closeBenchmarkButton =
   document.getElementById("close-benchmark-btn");
 
-const apiTimeElement = document.getElementById("api-time");
-const cacheHitsElement = document.getElementById("cache-hits");
-const cacheMissesElement = document.getElementById("cache-misses");
+// Benchmark elements
+const apiTimeElement =
+  document.getElementById("api-time");
+const cacheHitsElement =
+  document.getElementById("cache-hits");
+const cacheMissesElement =
+  document.getElementById("cache-misses");
 const benchmarkResultsElement =
   document.getElementById("benchmark-results");
 
-// Persistent player elements
-const playerBar = document.getElementById("audio-player-bar");
-const playerArtwork = document.getElementById("player-artwork");
-const playerTitle = document.getElementById("player-title");
-const playerArtist = document.getElementById("player-artist");
+const renderTimeElement =
+  document.getElementById("render-time");
+const domNodeCountElement =
+  document.getElementById("dom-node-count");
+const totalSearchTimeElement =
+  document.getElementById("total-search-time");
+const cacheHitRateElement =
+  document.getElementById("cache-hit-rate");
+
+// Persistent audio player elements
+const playerBar =
+  document.getElementById("audio-player-bar");
+const playerArtwork =
+  document.getElementById("player-artwork");
+const playerTitle =
+  document.getElementById("player-title");
+const playerArtist =
+  document.getElementById("player-artist");
 const playerPlayButton =
   document.getElementById("player-play-btn");
-const playerSeek = document.getElementById("player-seek");
+const playerSeek =
+  document.getElementById("player-seek");
 const playerCurrentTime =
   document.getElementById("player-current-time");
 const playerDuration =
@@ -85,9 +107,12 @@ const playerDuration =
 const playerVolume =
   document.getElementById("player-volume");
 
+// =============================================
 // 3. APPLICATION STATE
+// =============================================
 
 let activeCategory = "all";
+
 let debounceTimer = null;
 let activeController = null;
 let currentRequestId = 0;
@@ -95,8 +120,9 @@ let currentRequestId = 0;
 let cacheHits = 0;
 let cacheMisses = 0;
 
-// Shared audio instance
+// Persistent audio state
 const audioPlayer = new Audio();
+
 audioPlayer.preload = "metadata";
 audioPlayer.volume = 0.8;
 
@@ -105,7 +131,9 @@ let currentPreviewUrl = null;
 let currentPreviewButton = null;
 let playbackRequestId = 0;
 
+// =============================================
 // 4. GENERAL HELPERS
+// =============================================
 
 function showStatus(message) {
   statusMessage.textContent = message;
@@ -121,16 +149,16 @@ function resetResults() {
 
   resultsTitle.textContent = "Discover Media";
   resultsCount.textContent = "";
+
   benchmarkResultsElement.textContent = "0";
   apiTimeElement.textContent = "—";
 
-  // Cards are removed, but audio continues playing.
-  currentPreviewButton = null;
-}
+  renderTimeElement.textContent = "—";
+  domNodeCountElement.textContent = "0";
+  totalSearchTimeElement.textContent = "—";
 
-function updateCacheMetrics() {
-  cacheHitsElement.textContent = String(cacheHits);
-  cacheMissesElement.textContent = String(cacheMisses);
+  // Do not stop audio when results are cleared.
+  currentPreviewButton = null;
 }
 
 function formatTime(seconds) {
@@ -168,7 +196,52 @@ function getTrackTitle(item) {
   );
 }
 
-// 5. CACHE
+// =============================================
+// 5. PERFORMANCE MEASUREMENT HELPERS
+// =============================================
+
+function updateCacheHitRate() {
+  const totalLookups = cacheHits + cacheMisses;
+
+  const hitRate = totalLookups === 0
+    ? 0
+    : (cacheHits / totalLookups) * 100;
+
+  cacheHitRateElement.textContent =
+    `${hitRate.toFixed(1)}%`;
+}
+
+function updateCacheMetrics() {
+  cacheHitsElement.textContent =
+    String(cacheHits);
+
+  cacheMissesElement.textContent =
+    String(cacheMisses);
+
+  updateCacheHitRate();
+}
+
+function updateDOMNodeCount() {
+  const nodeCount =
+    mediaGrid.querySelectorAll("*").length;
+
+  domNodeCountElement.textContent =
+    String(nodeCount);
+}
+
+function updateSearchDuration(startTime) {
+  const duration =
+    performance.now() - startTime;
+
+  totalSearchTimeElement.textContent =
+    `${duration.toFixed(2)} ms`;
+
+  return duration;
+}
+
+// =============================================
+// 6. LOCALSTORAGE CACHE
+// =============================================
 
 function getCacheKey(query, category) {
   return (
@@ -217,22 +290,29 @@ function getCachedResults(query, category) {
 
 function saveCachedResults(query, category, results) {
   try {
+    const key = getCacheKey(query, category);
+
+    const entry = {
+      timestamp: Date.now(),
+      results: results
+    };
+
     localStorage.setItem(
-      getCacheKey(query, category),
-      JSON.stringify({
-        timestamp: Date.now(),
-        results: results
-      })
+      key,
+      JSON.stringify(entry)
     );
+
   } catch (error) {
     console.warn("Cache write failed:", error);
   }
 }
 
-// 6. REQUEST CANCELLATION
+// =============================================
+// 7. REQUEST CANCELLATION
+// =============================================
 
 function cancelActiveRequest() {
-  if (activeController) {
+  if (activeController !== null) {
     activeController.abort();
     activeController = null;
   }
@@ -240,12 +320,14 @@ function cancelActiveRequest() {
 
 function invalidateCurrentSearch() {
   currentRequestId++;
+
   cancelActiveRequest();
+
   searchButton.disabled = false;
 }
 
 // =============================================
-// 7. PERSISTENT AUDIO PLAYER
+// 8. PERSISTENT AUDIO PLAYER
 // =============================================
 
 function updatePlaybackButtons() {
@@ -254,7 +336,8 @@ function updatePlaybackButtons() {
     !audioPlayer.paused &&
     !audioPlayer.ended;
 
-  playerPlayButton.textContent = isPlaying ? "⏸" : "▶";
+  playerPlayButton.textContent =
+    isPlaying ? "⏸" : "▶";
 
   playerPlayButton.setAttribute(
     "aria-label",
@@ -263,7 +346,9 @@ function updatePlaybackButtons() {
 
   if (currentPreviewButton) {
     currentPreviewButton.textContent =
-      isPlaying ? "⏸ Pause Preview" : "▶ Play Preview";
+      isPlaying
+        ? "⏸ Pause Preview"
+        : "▶ Play Preview";
   }
 }
 
@@ -271,10 +356,12 @@ function updatePlayerProgress() {
   const currentTime = audioPlayer.currentTime;
   const duration = audioPlayer.duration;
 
-  playerCurrentTime.textContent = formatTime(currentTime);
+  playerCurrentTime.textContent =
+    formatTime(currentTime);
 
   if (Number.isFinite(duration) && duration > 0) {
-    playerDuration.textContent = formatTime(duration);
+    playerDuration.textContent =
+      formatTime(duration);
 
     playerSeek.value = String(
       (currentTime / duration) * 100
@@ -291,7 +378,9 @@ function updatePlayerProgress() {
 function showPlayerForTrack(item) {
   currentTrack = item;
 
-  playerTitle.textContent = getTrackTitle(item);
+  playerTitle.textContent =
+    getTrackTitle(item);
+
   playerArtist.textContent =
     item.artistName || "Unknown Artist";
 
@@ -299,8 +388,10 @@ function showPlayerForTrack(item) {
 
   if (artwork) {
     playerArtwork.src = artwork;
+
     playerArtwork.alt =
       "Artwork for " + getTrackTitle(item);
+
     playerArtwork.hidden = false;
   } else {
     playerArtwork.removeAttribute("src");
@@ -329,7 +420,10 @@ async function startPlayback() {
     }
 
     if (error.name !== "AbortError") {
-      console.error("Audio playback failed:", error);
+      console.error(
+        "Audio playback failed:",
+        error
+      );
     }
 
     updatePlaybackButtons();
@@ -343,7 +437,7 @@ function togglePreview(item, button) {
 
   const previewUrl = item.previewUrl;
 
-  // Clicking the currently selected track toggles playback.
+  // Toggle the currently selected track.
   if (currentPreviewUrl === previewUrl) {
     currentPreviewButton = button;
 
@@ -362,12 +456,13 @@ function togglePreview(item, button) {
     return;
   }
 
-  // Reset the previous card's button.
+  // Reset the previous card button.
   if (currentPreviewButton) {
-    currentPreviewButton.textContent = "▶ Play Preview";
+    currentPreviewButton.textContent =
+      "▶ Play Preview";
   }
 
-  // Stop the previous preview before changing sources.
+  // Stop the previous track.
   playbackRequestId++;
   audioPlayer.pause();
 
@@ -384,7 +479,7 @@ function togglePreview(item, button) {
   startPlayback();
 }
 
-// Bottom play/pause button
+// Bottom player play/pause
 playerPlayButton.addEventListener("click", () => {
   if (!currentPreviewUrl) {
     return;
@@ -403,15 +498,19 @@ playerPlayButton.addEventListener("click", () => {
   }
 });
 
-// Seek through the preview
+// Seek through preview
 playerSeek.addEventListener("input", () => {
   const duration = audioPlayer.duration;
 
-  if (!Number.isFinite(duration) || duration <= 0) {
+  if (
+    !Number.isFinite(duration) ||
+    duration <= 0
+  ) {
     return;
   }
 
-  const percentage = Number(playerSeek.value);
+  const percentage =
+    Number(playerSeek.value);
 
   audioPlayer.currentTime =
     (percentage / 100) * duration;
@@ -419,21 +518,41 @@ playerSeek.addEventListener("input", () => {
   updatePlayerProgress();
 });
 
-// Adjust volume
+// Volume control
 playerVolume.addEventListener("input", () => {
   audioPlayer.volume =
     Number(playerVolume.value) / 100;
 });
 
-// Synchronize UI with actual audio events
-audioPlayer.addEventListener("play", updatePlaybackButtons);
-audioPlayer.addEventListener("pause", updatePlaybackButtons);
-audioPlayer.addEventListener("timeupdate", updatePlayerProgress);
-audioPlayer.addEventListener("loadedmetadata", updatePlayerProgress);
-audioPlayer.addEventListener("durationchange", updatePlayerProgress);
+// Audio event listeners
+audioPlayer.addEventListener(
+  "play",
+  updatePlaybackButtons
+);
+
+audioPlayer.addEventListener(
+  "pause",
+  updatePlaybackButtons
+);
+
+audioPlayer.addEventListener(
+  "timeupdate",
+  updatePlayerProgress
+);
+
+audioPlayer.addEventListener(
+  "loadedmetadata",
+  updatePlayerProgress
+);
+
+audioPlayer.addEventListener(
+  "durationchange",
+  updatePlayerProgress
+);
 
 audioPlayer.addEventListener("ended", () => {
   playbackRequestId++;
+
   updatePlaybackButtons();
   updatePlayerProgress();
 });
@@ -443,20 +562,27 @@ audioPlayer.addEventListener("error", () => {
     return;
   }
 
-  console.error("Unable to load audio preview.");
+  console.error(
+    "Unable to load audio preview."
+  );
+
   updatePlaybackButtons();
 });
 
 // =============================================
-// 8. MEDIA CARDS
+// 9. CREATE MEDIA CARDS
 // =============================================
 
 function createMediaCard(item) {
-  const card = document.createElement("article");
+  const card =
+    document.createElement("article");
+
   card.className = "media-card";
 
   // Artwork
-  const image = document.createElement("img");
+  const image =
+    document.createElement("img");
+
   image.className = "media-artwork";
   image.loading = "lazy";
 
@@ -464,40 +590,58 @@ function createMediaCard(item) {
 
   if (artwork) {
     image.src = artwork;
-    image.alt = "Artwork for " + getTrackTitle(item);
+
+    image.alt =
+      "Artwork for " + getTrackTitle(item);
   } else {
     image.alt = "Artwork unavailable";
   }
 
-  // Information
-  const info = document.createElement("div");
+  // Information container
+  const info =
+    document.createElement("div");
+
   info.className = "media-info";
 
-  const title = document.createElement("h3");
+  // Title
+  const title =
+    document.createElement("h3");
+
   title.className = "media-title";
   title.textContent = getTrackTitle(item);
 
-  const artist = document.createElement("p");
+  // Artist
+  const artist =
+    document.createElement("p");
+
   artist.className = "media-artist";
+
   artist.textContent =
     item.artistName || "Unknown Artist";
 
-  const meta = document.createElement("div");
+  // Metadata
+  const meta =
+    document.createElement("div");
+
   meta.className = "media-meta";
 
-  const genre = document.createElement("span");
+  const genre =
+    document.createElement("span");
+
   genre.textContent =
     item.primaryGenreName || "Media";
 
-  const year = document.createElement("span");
+  const year =
+    document.createElement("span");
 
   if (item.releaseDate) {
     const parsedYear =
       new Date(item.releaseDate).getFullYear();
 
-    year.textContent = Number.isNaN(parsedYear)
-      ? "—"
-      : String(parsedYear);
+    year.textContent =
+      Number.isNaN(parsedYear)
+        ? "—"
+        : String(parsedYear);
   } else {
     year.textContent = "—";
   }
@@ -505,9 +649,12 @@ function createMediaCard(item) {
   meta.append(genre, year);
 
   // Preview button
-  const previewButton = document.createElement("button");
+  const previewButton =
+    document.createElement("button");
+
   previewButton.type = "button";
-  previewButton.className = "media-preview-btn";
+  previewButton.className =
+    "media-preview-btn";
 
   if (item.previewUrl) {
     previewButton.disabled = false;
@@ -524,9 +671,13 @@ function createMediaCard(item) {
       currentPreviewButton = previewButton;
     }
 
-    previewButton.addEventListener("click", () => {
-      togglePreview(item, previewButton);
-    });
+    previewButton.addEventListener(
+      "click",
+      () => {
+        togglePreview(item, previewButton);
+      }
+    );
+
   } else {
     previewButton.textContent = "No Preview";
     previewButton.disabled = true;
@@ -545,17 +696,21 @@ function createMediaCard(item) {
 }
 
 // =============================================
-// 9. RENDER RESULTS
+// 10. RENDER RESULTS + PERFORMANCE METRICS
 // =============================================
 
 function renderResults(items, query, category) {
+  // Start timing synchronous DOM construction.
+  const renderStartTime = performance.now();
+
   mediaGrid.replaceChildren();
 
-  // The previous card may no longer exist.
+  // Previous card may no longer exist.
   currentPreviewButton = null;
 
   resultsTitle.textContent =
-    MEDIA_CATEGORIES[category].label + " Results";
+    MEDIA_CATEGORIES[category].label +
+    " Results";
 
   resultsCount.textContent =
     `${items.length} results displayed`;
@@ -565,8 +720,18 @@ function renderResults(items, query, category) {
 
   if (items.length === 0) {
     showStatus(
-      `No results found for "${query}". Try another search.`
+      `No results found for "${query}". ` +
+      "Try another search."
     );
+
+    const renderDuration =
+      performance.now() - renderStartTime;
+
+    renderTimeElement.textContent =
+      `${renderDuration.toFixed(2)} ms`;
+
+    updateDOMNodeCount();
+
     return;
   }
 
@@ -576,22 +741,36 @@ function renderResults(items, query, category) {
     document.createDocumentFragment();
 
   items.forEach((item) => {
-    fragment.appendChild(createMediaCard(item));
+    fragment.appendChild(
+      createMediaCard(item)
+    );
   });
 
   mediaGrid.appendChild(fragment);
+
+  // Measure the completed synchronous DOM update.
+  const renderDuration =
+    performance.now() - renderStartTime;
+
+  renderTimeElement.textContent =
+    `${renderDuration.toFixed(2)} ms`;
+
+  updateDOMNodeCount();
 }
 
 // =============================================
-// 10. SEARCH
+// 11. SEARCH + PERFORMANCE METRICS
 // =============================================
 
 async function searchMedia(query) {
+  const searchStartTime = performance.now();
+
   const term = query.trim();
 
   const requestId = ++currentRequestId;
 
   cancelActiveRequest();
+
   searchButton.disabled = false;
 
   if (!term) {
@@ -605,10 +784,14 @@ async function searchMedia(query) {
   }
 
   const requestedCategory = activeCategory;
+
   const selectedCategory =
     MEDIA_CATEGORIES[requestedCategory];
 
-  // Cache lookup
+  // ===========================================
+  // CACHE LOOKUP
+  // ===========================================
+
   const cacheStartTime = performance.now();
 
   const cachedResults = getCachedResults(
@@ -632,12 +815,18 @@ async function searchMedia(query) {
       requestedCategory
     );
 
+    updateSearchDuration(searchStartTime);
+
     console.log(
       `[CACHE HIT] ${term} | ${requestedCategory}`
     );
 
     return;
   }
+
+  // ===========================================
+  // CACHE MISS
+  // ===========================================
 
   cacheMisses++;
   updateCacheMetrics();
@@ -647,8 +836,14 @@ async function searchMedia(query) {
 
   resultsTitle.textContent = "Searching...";
   resultsCount.textContent = "";
+
   benchmarkResultsElement.textContent = "0";
+
   apiTimeElement.textContent = "Loading...";
+  renderTimeElement.textContent = "—";
+  domNodeCountElement.textContent = "0";
+  totalSearchTimeElement.textContent =
+    "Loading...";
 
   showStatus(
     `Searching ${selectedCategory.label.toLowerCase()} ` +
@@ -656,6 +851,10 @@ async function searchMedia(query) {
   );
 
   searchButton.disabled = true;
+
+  // ===========================================
+  // PREPARE API REQUEST
+  // ===========================================
 
   const params = new URLSearchParams({
     term: term,
@@ -666,15 +865,24 @@ async function searchMedia(query) {
   });
 
   if (selectedCategory.entity) {
-    params.set("entity", selectedCategory.entity);
+    params.set(
+      "entity",
+      selectedCategory.entity
+    );
   }
 
-  const url = `${API_BASE}?${params.toString()}`;
+  const url =
+    `${API_BASE}?${params.toString()}`;
 
   const controller = new AbortController();
+
   activeController = controller;
 
   const startTime = performance.now();
+
+  // ===========================================
+  // FETCH DATA
+  // ===========================================
 
   try {
     const response = await fetch(url, {
@@ -683,12 +891,14 @@ async function searchMedia(query) {
 
     if (!response.ok) {
       throw new Error(
-        `HTTP ${response.status}: ${response.statusText}`
+        `HTTP ${response.status}: ` +
+        response.statusText
       );
     }
 
     const data = await response.json();
 
+    // Ignore outdated search responses.
     if (requestId !== currentRequestId) {
       return;
     }
@@ -699,27 +909,37 @@ async function searchMedia(query) {
       );
     }
 
-    const duration = performance.now() - startTime;
+    // Network + JSON parsing time.
+    const apiDuration =
+      performance.now() - startTime;
 
     apiTimeElement.textContent =
-      `${duration.toFixed(0)} ms`;
+      `${apiDuration.toFixed(0)} ms`;
 
+    // Cache successful results.
     saveCachedResults(
       term,
       requestedCategory,
       data.results
     );
 
+    // Render cards and measure DOM time.
     renderResults(
       data.results,
       term,
       requestedCategory
     );
 
+    // Measure total search-to-DOM completion time.
+    const totalDuration =
+      updateSearchDuration(searchStartTime);
+
     console.log(
-      `[API SUCCESS] ${term} | ${requestedCategory} | ` +
+      `[API SUCCESS] ${term} | ` +
+      `${requestedCategory} | ` +
       `${data.results.length} results | ` +
-      `${duration.toFixed(0)} ms`
+      `API: ${apiDuration.toFixed(0)} ms | ` +
+      `Total: ${totalDuration.toFixed(2)} ms`
     );
 
   } catch (error) {
@@ -731,15 +951,24 @@ async function searchMedia(query) {
       return;
     }
 
-    console.error("iTunes API search failed:", error);
+    console.error(
+      "iTunes API search failed:",
+      error
+    );
 
-    resultsTitle.textContent = "Search Failed";
+    resultsTitle.textContent =
+      "Search Failed";
+
     resultsCount.textContent = "";
+
     apiTimeElement.textContent = "Failed";
+    renderTimeElement.textContent = "—";
+    domNodeCountElement.textContent = "0";
+    totalSearchTimeElement.textContent = "Failed";
 
     showStatus(
-      "Unable to load results. Check your connection " +
-      "and try again."
+      "Unable to load results. " +
+      "Check your connection and try again."
     );
 
   } finally {
@@ -754,7 +983,7 @@ async function searchMedia(query) {
 }
 
 // =============================================
-// 11. CATEGORY FILTERS
+// 12. CATEGORY FILTERS
 // =============================================
 
 function selectCategory(category) {
@@ -768,7 +997,10 @@ function selectCategory(category) {
     const isActive =
       button.dataset.category === category;
 
-    button.classList.toggle("active", isActive);
+    button.classList.toggle(
+      "active",
+      isActive
+    );
 
     button.setAttribute(
       "aria-pressed",
@@ -801,7 +1033,7 @@ categoryButtons.forEach((button) => {
 });
 
 // =============================================
-// 12. DEBOUNCED SEARCH
+// 13. DEBOUNCED SEARCH
 // =============================================
 
 searchInput.addEventListener("input", () => {
@@ -828,6 +1060,7 @@ searchInput.addEventListener("input", () => {
   }, DEBOUNCE_DELAY);
 });
 
+// Manual search
 searchForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -838,7 +1071,7 @@ searchForm.addEventListener("submit", (event) => {
 });
 
 // =============================================
-// 13. BENCHMARK DRAWER
+// 14. BENCHMARK DRAWER
 // =============================================
 
 benchmarkButton.addEventListener("click", () => {
@@ -860,7 +1093,7 @@ closeBenchmarkButton.addEventListener("click", () => {
 });
 
 // =============================================
-// 14. INITIALIZATION
+// 15. INITIALIZATION
 // =============================================
 
 function initializeApp() {

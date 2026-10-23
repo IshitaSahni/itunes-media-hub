@@ -188,7 +188,6 @@
 
         <div>
           <h2 id="results-title">Discover Media</h2>
-
           <p id="results-count"></p>
         </div>
 
@@ -245,67 +244,107 @@
 
     <div class="benchmark-content">
 
-      <div class="benchmark-metric">
+      <!-- API Response Time -->
 
+      <div class="benchmark-metric">
         <span class="metric-label">
           API Response Time
         </span>
 
-        <strong
-          id="api-time"
-          class="metric-value"
-        >
+        <strong id="api-time" class="metric-value">
           —
         </strong>
-
       </div>
 
 
-      <div class="benchmark-metric">
+      <!-- Cache Hits -->
 
+      <div class="benchmark-metric">
         <span class="metric-label">
           Cache Hits
         </span>
 
-        <strong
-          id="cache-hits"
-          class="metric-value"
-        >
+        <strong id="cache-hits" class="metric-value">
           0
         </strong>
-
       </div>
 
 
-      <div class="benchmark-metric">
+      <!-- Cache Misses -->
 
+      <div class="benchmark-metric">
         <span class="metric-label">
           Cache Misses
         </span>
 
-        <strong
-          id="cache-misses"
-          class="metric-value"
-        >
+        <strong id="cache-misses" class="metric-value">
           0
         </strong>
-
       </div>
 
 
-      <div class="benchmark-metric">
+      <!-- Results Displayed -->
 
+      <div class="benchmark-metric">
         <span class="metric-label">
           Results Displayed
         </span>
 
-        <strong
-          id="benchmark-results"
-          class="metric-value"
-        >
+        <strong id="benchmark-results" class="metric-value">
           0
         </strong>
+      </div>
 
+
+      <!-- NEW: DOM Render Time -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          DOM Render Time
+        </span>
+
+        <strong id="render-time" class="metric-value">
+          —
+        </strong>
+      </div>
+
+
+      <!-- NEW: DOM Node Count -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          DOM Node Count
+        </span>
+
+        <strong id="dom-node-count" class="metric-value">
+          0
+        </strong>
+      </div>
+
+
+      <!-- NEW: Search-to-Display Time -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Search-to-Display Time
+        </span>
+
+        <strong id="total-search-time" class="metric-value">
+          —
+        </strong>
+      </div>
+
+
+      <!-- NEW: Cache Hit Rate -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Cache Hit Rate
+        </span>
+
+        <strong id="cache-hit-rate" class="metric-value">
+          0%
+        </strong>
       </div>
 
     </div>
@@ -317,6 +356,11 @@
         Search requests are optimized using
         500ms debouncing, localStorage caching,
         and request cancellation.
+      </p>
+
+      <p>
+        Rendering and search metrics are measured
+        using the browser Performance API.
       </p>
 
     </div>
