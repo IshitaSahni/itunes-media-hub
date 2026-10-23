@@ -8,6 +8,7 @@ import BenchmarkDrawer from "./components/BenchmarkDrawer";
 import AudioPlayer from "./components/AudioPlayer";
 
 import useItunesSearch from "./hooks/useItunesSearch";
+import useAudioPlayer from "./hooks/useAudioPlayer";
 
 import "./App.css";
 
@@ -25,14 +26,19 @@ function App() {
     changeCategory,
   } = useItunesSearch();
 
-  const [isBenchmarkOpen, setIsBenchmarkOpen] = useState(false);
+  const {
+    currentTrack,
+    isPlaying,
+    currentTime,
+    duration,
+    volume,
+    playPreview,
+    togglePlayback,
+    seek,
+    changeVolume,
+  } = useAudioPlayer();
 
-  // Audio playback will be connected in Step 5.
-  const currentTrack = null;
-  const isPlaying = false;
-  const currentTime = 0;
-  const duration = 0;
-  const volume = 0.8;
+  const [isBenchmarkOpen, setIsBenchmarkOpen] = useState(false);
 
   const metrics = {
     ...searchMetrics,
@@ -87,8 +93,8 @@ function App() {
           loading={loading}
           error={error}
           hasSearched={hasSearched}
-          onPlayPreview={() => {}}
-          currentPreviewUrl={null}
+          onPlayPreview={playPreview}
+          currentPreviewUrl={currentTrack?.previewUrl ?? null}
           isPlaying={isPlaying}
         />
       </main>
@@ -105,9 +111,9 @@ function App() {
         currentTime={currentTime}
         duration={duration}
         volume={volume}
-        onTogglePlayback={() => {}}
-        onSeek={() => {}}
-        onVolumeChange={() => {}}
+        onTogglePlayback={togglePlayback}
+        onSeek={seek}
+        onVolumeChange={changeVolume}
       />
 
       <footer className="app-footer">
