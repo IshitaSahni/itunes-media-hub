@@ -12,6 +12,34 @@ const API_BASE = "https://itunes.apple.com/search";
 const SEARCH_LIMIT = 24;
 const STORE_COUNTRY = "IN";
 
+const MEDIA_CATEGORIES = {
+  all: {
+    label: "All Media",
+    media: "all"
+  },
+  music: {
+    label: "Songs",
+    media: "music",
+    entity: "song"
+  },
+  podcast: {
+    label: "Podcasts",
+    media: "podcast",
+    entity: "podcast"
+  },
+  audiobook: {
+    label: "Audiobooks",
+    media: "audiobook",
+    entity: "audiobook"
+  },
+  musicVideo: {
+    label: "Music Videos",
+    media: "musicVideo",
+    entity: "musicVideo"
+  }
+};
+
+
 // 2. DOM references
 const searchForm = document.getElementById("search-form");
 const searchInput = document.getElementById("search-input");
@@ -35,6 +63,12 @@ const closeBenchmarkButton =
 
 // 3. Application state
 let currentRequestId = 0;
+
+let activeCategory = "all";
+
+const categoryButtons =
+  document.querySelectorAll(".category-btn");
+
 
 // 4. Display status messages
 function showStatus(message) {
@@ -153,6 +187,8 @@ async function searchMedia(query) {
 
   // Prevent older requests from changing the UI.
   const requestId = ++currentRequestId;
+  const requestedCategory = activeCategory;
+
 
   mediaGrid.replaceChildren();
   resultsCount.textContent = "";
@@ -161,13 +197,23 @@ async function searchMedia(query) {
 
   searchButton.disabled = true;
 
-  const params = new URLSearchParams({
-    term: term,
-    country: STORE_COUNTRY,
-    media: "all",
-    limit: String(SEARCH_LIMIT),
-    explicit: "No"
-  });
+  
+const selectedCategory =
+  MEDIA_CATEGORIES[requestedCategory];
+
+
+const params = new URLSearchParams({
+  term: term,
+  country: STORE_COUNTRY,
+  media: selectedCategory.media,
+  limit: String(SEARCH_LIMIT),
+  explicit: "No"
+});
+
+if (selectedCategory.entity) {
+  params.set("entity", selectedCategory.entity);
+}
+
 
   const url = `${API_BASE}?${params.toString()}`;
   const startTime = performance.now();
@@ -215,6 +261,62 @@ async function searchMedia(query) {
     }
   }
 }
+
+
+ // ============================================
+ // CATEGORY FILTERING
+ // ============================================
+
+ function selectCategory(category) {
+   if (!MEDIA_CATEGORIES[category]) {
+     return;
+   }
+
+   activeCategory = category;
+
+   // Update the selected category button
+   categoryButtons.forEach((button) => {
+     const isActive =
+       button.dataset.category === category;
+
+     button.classList.toggle("active", isActive);
+
+     button.setAttribute(
+       "aria-pressed",
+       String(isActive)
+     );
+   });
+
+   // Check whether a search term already exists
+   const query = searchInput.value.trim();
+
+   if (query) {
+     // Automatically search the new category
+     searchMedia(query);
+   } else {
+     // Invalidate previous pending requests
+     currentRequestId++;
+
+     searchButton.disabled = false;
+     mediaGrid.replaceChildren();
+
+     resultsTitle.textContent = "Discover Media";
+     resultsCount.textContent = "";
+
+     showStatus(
+       `Enter a search term to explore ${
+         MEDIA_CATEGORIES[category].label.toLowerCase()
+       }.`
+     );
+   }
+ }
+
+ // Attach click events to all five buttons
+ categoryButtons.forEach((button) => {
+   button.addEventListener("click", () => {
+     selectCategory(button.dataset.category);
+   });
+ });
 
 // 8. Search form event
 searchForm.addEventListener("submit", (event) => {
