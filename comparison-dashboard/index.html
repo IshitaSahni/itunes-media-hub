@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="description"
+    content="Interactive benchmark dashboard comparing Vanilla JavaScript and React implementations of the iTunes Media Hub."
+  />
+
+  <title>Vanilla JS vs React | Performance Dashboard</title>
+
+  <link rel="stylesheet" href="./style.css" />
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"
+    defer
+  ></script>
+  <script src="./app.js" defer></script>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#overview">
+        <span class="brand-icon">◈</span>
+        <span>
+          iTunes Media Hub
+          <span class="brand-muted">/ Benchmark Lab</span>
+        </span>
+      </a>
+
+      <nav aria-label="Main navigation">
+        <a href="#overview">Overview</a>
+        <a href="#performance">Performance</a>
+        <a href="#bundle">Bundle Size</a>
+        <a href="#findings">Findings</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="overview">
+      <div class="eyebrow">FRAMEWORK PERFORMANCE STUDY</div>
+
+      <h1>
+        Vanilla JavaScript
+        <span class="versus">vs</span>
+        React
+      </h1>
+
+      <p class="hero-description">
+        Two implementations. One media discovery experience.
+        Explore measured loading performance, search behaviour,
+        rendering, and application size using repeatable browser benchmarks.
+      </p>
+
+      <div class="hero-actions">
+        <a class="button button-primary" href="#performance">
+          Explore Benchmarks →
+        </a>
+        <a class="button button-secondary" href="#findings">
+          Read Findings
+        </a>
+      </div>
+
+      <div class="app-launcher">
+        <div class="app-launcher-label">
+          EXPLORE BOTH IMPLEMENTATIONS
+        </div>
+
+        <div class="app-launcher-grid">
+          <a
+            class="app-launch-card vanilla-launch"
+            href="http://127.0.0.1:5500"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="app-launch-name">Vanilla JavaScript</span>
+            <span class="app-launch-description">
+              Original JavaScript implementation
+            </span>
+            <span class="app-launch-link">Open Application ↗</span>
+          </a>
+
+          <a
+            class="app-launch-card react-launch"
+            href="http://127.0.0.1:4173"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <span class="app-launch-name">React</span>
+            <span class="app-launch-description">
+              React production implementation
+            </span>
+            <span class="app-launch-link">Open Application ↗</span>
+          </a>
+        </div>
+
+        <p class="launcher-note">
+          Start both local application servers to use these links.
+        </p>
+      </div>
+
+      <div class="hero-meta">
+        <span>● Playwright + Chromium</span>
+        <span>● iTunes Search API</span>
+        <span>● Repeated benchmark runs</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="summary-heading">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">AT A GLANCE</div>
+          <h2 id="summary-heading">Benchmark Summary</h2>
+        </div>
+
+        <span class="data-status" id="data-status" role="status">
+          Loading benchmark data…
+        </span>
+      </div>
+
+      <div class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-label">Vanilla JS Page Load</div>
+          <div class="stat-value" id="vanilla-load">—</div>
+          <div class="stat-note">Mean across browser runs</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">React Page Load</div>
+          <div class="stat-value" id="react-load">—</div>
+          <div class="stat-note">Mean across browser runs</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">Vanilla JS Gzip Size</div>
+          <div class="stat-value" id="vanilla-gzip">—</div>
+          <div class="stat-note">HTML + CSS + JavaScript</div>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-label">React Gzip Size</div>
+          <div class="stat-value" id="react-gzip">—</div>
+          <div class="stat-note">HTML + CSS + JavaScript</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="performance">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">BROWSER BENCHMARKS</div>
+          <h2>Performance Comparison</h2>
+        </div>
+
+        <p class="section-subtitle">
+          Compare central tendencies across repeated benchmark runs.
+        </p>
+      </div>
+
+      <div class="comparison-toolbar">
+        <div class="toolbar-copy">
+          <h3>Statistical View</h3>
+          <p id="statistic-description">
+            Mean: the arithmetic average of all observed runs.
+          </p>
+        </div>
+
+        <div class="statistic-selector" role="group" aria-label="Choose statistic">
+          <button
+            type="button"
+            class="statistic-button active"
+            data-statistic="mean"
+            aria-pressed="true"
+          >
+            Mean
+          </button>
+          <button
+            type="button"
+            class="statistic-button"
+            data-statistic="median"
+            aria-pressed="false"
+          >
+            Median
+          </button>
+        </div>
+      </div>
+
+      <div class="chart-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Loading &amp; Rendering</h3>
+            <p id="loading-chart-description">
+              Mean duration in milliseconds
+            </p>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas
+              id="load-chart"
+              role="img"
+              aria-label="Loading and rendering comparison"
+            ></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Search Performance</h3>
+            <p id="search-chart-description">
+              Mean cold and repeated search duration
+            </p>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas
+              id="search-chart"
+              role="img"
+              aria-label="Cold and repeated search comparison"
+            ></canvas>
+          </div>
+        </article>
+      </div>
+
+      <article class="panel table-panel">
+        <div class="panel-heading">
+          <h3>Detailed Benchmark Statistics</h3>
+          <p id="table-description">
+            Mean values alongside standard deviations
+          </p>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Metric</th>
+                <th scope="col" id="vanilla-stat-heading">
+                  Vanilla JS Mean
+                </th>
+                <th scope="col" id="react-stat-heading">
+                  React Mean
+                </th>
+                <th scope="col">Vanilla JS Std. Dev.</th>
+                <th scope="col">React Std. Dev.</th>
+              </tr>
+            </thead>
+
+            <tbody id="metrics-table">
+              <tr>
+                <td colspan="5">Loading measurements…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="table-note">
+          Standard deviation describes the spread of observed runs.
+          It does not change when switching between Mean and Median.
+        </p>
+      </article>
+    </section>
+
+    <section class="section" id="bundle">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">APPLICATION FOOTPRINT</div>
+          <h2>Bundle Size Analysis</h2>
+        </div>
+
+        <p class="section-subtitle">
+          HTML, CSS and JavaScript files only.
+        </p>
+      </div>
+
+      <div class="chart-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Uncompressed vs Gzip</h3>
+            <p>File sizes in KB (1024 bytes)</p>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas
+              id="bundle-chart"
+              role="img"
+              aria-label="Raw and Gzip bundle size comparison"
+            ></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Asset Breakdown</h3>
+            <p>JavaScript, CSS and HTML sizes in KB</p>
+          </div>
+
+          <div class="chart-wrap">
+            <canvas
+              id="assets-chart"
+              role="img"
+              aria-label="Application asset size comparison"
+            ></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="findings">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">INTERPRETATION</div>
+          <h2>Key Findings &amp; Limitations</h2>
+        </div>
+      </div>
+
+      <div class="findings-grid">
+        <article class="finding-card">
+          <span class="finding-number">01</span>
+          <h3>Observed Timing</h3>
+          <p>
+            React recorded slightly lower mean page-load and
+            controlled rendering times in these runs.
+            Small differences do not establish that one
+            framework is inherently faster.
+          </p>
+        </article>
+
+        <article class="finding-card">
+          <span class="finding-number">02</span>
+          <h3>Application Size</h3>
+          <p>
+            Vanilla JavaScript had a substantially smaller
+            measured HTML, CSS and JavaScript footprint.
+            The React production build includes framework
+            code and bundled dependencies.
+          </p>
+        </article>
+
+        <article class="finding-card">
+          <span class="finding-number">03</span>
+          <h3>Search &amp; Caching</h3>
+          <p>
+            Repeated searches produced zero observed additional
+            API requests in the collected runs, consistent with
+            caching. Cold searches are affected by network
+            conditions and differing API request parameters.
+          </p>
+        </article>
+      </div>
+
+      <article class="methodology-panel">
+        <h3>Methodology Notes</h3>
+        <p>
+          Browser benchmarks were collected using Playwright
+          and Chromium. Controlled rendering used the same
+          response fixture for both applications. Search
+          measurements include live API variability.
+        </p>
+        <p>
+          Bundle measurements compare Vanilla source files
+          with a React production build. Gzip values represent
+          compressed file sizes, not measured network transfers.
+        </p>
+        <p class="methodology-detail" id="run-counts"></p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>iTunes Media Hub · Vanilla JavaScript vs React</span>
+      <span>Group Project · Performance Comparison Dashboard</span>
+    </div>
+  </footer>
+</body>
+</html>
