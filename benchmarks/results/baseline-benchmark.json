@@ -1,0 +1,100 @@
+{
+  "timestamp": "2026-10-23T19:38:12.389Z",
+  "runsPerApp": 5,
+  "rawResults": [
+    {
+      "app": "vanilla",
+      "run": 1,
+      "pageLoadTime": 41.600000001490116,
+      "domContentLoaded": 38.69999999925494,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "vanilla",
+      "run": 2,
+      "pageLoadTime": 154.70000000298023,
+      "domContentLoaded": 154.60000000149012,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "vanilla",
+      "run": 3,
+      "pageLoadTime": 138.19999999925494,
+      "domContentLoaded": 138.10000000149012,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "vanilla",
+      "run": 4,
+      "pageLoadTime": 167.30000000074506,
+      "domContentLoaded": 167.19999999925494,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "vanilla",
+      "run": 5,
+      "pageLoadTime": 50.80000000074506,
+      "domContentLoaded": 48.19999999925494,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "react",
+      "run": 1,
+      "pageLoadTime": 112.10000000149012,
+      "domContentLoaded": 112.10000000149012,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "react",
+      "run": 2,
+      "pageLoadTime": 134.69999999925494,
+      "domContentLoaded": 134.59999999776483,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "react",
+      "run": 3,
+      "pageLoadTime": 116.5,
+      "domContentLoaded": 116.5,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "react",
+      "run": 4,
+      "pageLoadTime": 89.89999999850988,
+      "domContentLoaded": 89.89999999850988,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    },
+    {
+      "app": "react",
+      "run": 5,
+      "pageLoadTime": 85.89999999850988,
+      "domContentLoaded": 85.80000000074506,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    }
+  ],
+  "summary": {
+    "vanilla": {
+      "pageLoadTime": 110.52,
+      "domContentLoaded": 109.36,
+      "domNodeCount": 100,
+      "jsHeapUsed": 10000000
+    },
+    "react": {
+      "pageLoadTime": 107.82,
+      "domContentLoaded": 107.78,
+      "domNodeCount": 52,
+      "jsHeapUsed": 10000000
+    }
+  }
+}

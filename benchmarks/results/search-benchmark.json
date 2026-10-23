@@ -1,0 +1,364 @@
+{
+  "timestamp": "2026-10-23T20:03:27.418Z",
+  "primaryQuery": "Arijit Singh",
+  "secondaryQuery": "Taylor Swift",
+  "runsPerApp": 10,
+  "rawResults": [
+    {
+      "app": "vanilla",
+      "run": 1,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 4232.8,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 986.85,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 76.69
+    },
+    {
+      "app": "vanilla",
+      "run": 2,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1195.6,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1097.39,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 8.21
+    },
+    {
+      "app": "vanilla",
+      "run": 3,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1192.75,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1048.76,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 12.07
+    },
+    {
+      "app": "vanilla",
+      "run": 4,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1308.9,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 965.09,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 26.27
+    },
+    {
+      "app": "vanilla",
+      "run": 5,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1121.45,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1017.02,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 9.31
+    },
+    {
+      "app": "vanilla",
+      "run": 6,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1077.59,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1027.15,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 4.68
+    },
+    {
+      "app": "vanilla",
+      "run": 7,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1584.59,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 991.48,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 37.43
+    },
+    {
+      "app": "vanilla",
+      "run": 8,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1202.31,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1010.22,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 15.98
+    },
+    {
+      "app": "vanilla",
+      "run": 9,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1443.27,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 983.09,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 31.88
+    },
+    {
+      "app": "vanilla",
+      "run": 10,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1119.31,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 1026.1,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 8.33
+    },
+    {
+      "app": "react",
+      "run": 1,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1173.58,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 990.52,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 15.6
+    },
+    {
+      "app": "react",
+      "run": 2,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1451.2,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 978.51,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 32.57
+    },
+    {
+      "app": "react",
+      "run": 3,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1211.29,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 983.93,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 18.77
+    },
+    {
+      "app": "react",
+      "run": 4,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1156.06,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 957.42,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 17.18
+    },
+    {
+      "app": "react",
+      "run": 5,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1181.45,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 920.52,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 22.09
+    },
+    {
+      "app": "react",
+      "run": 6,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1110.69,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 986.68,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 11.17
+    },
+    {
+      "app": "react",
+      "run": 7,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1095.11,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 934.22,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 14.69
+    },
+    {
+      "app": "react",
+      "run": 8,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1162.14,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 978.51,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 15.8
+    },
+    {
+      "app": "react",
+      "run": 9,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1076.78,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 937.86,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 12.9
+    },
+    {
+      "app": "react",
+      "run": 10,
+      "query": "Arijit Singh",
+      "coldSearch": {
+        "searchToDisplayTime": 1106.28,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261
+      },
+      "cachedSearch": {
+        "searchToDisplayTime": 964.64,
+        "resultsDisplayed": 29,
+        "domNodeCount": 261,
+        "apiRequests": 0
+      },
+      "cacheImprovement": 12.8
+    }
+  ],
+  "summary": {
+    "vanilla": {
+      "coldSearchTime": 1547.86,
+      "cachedSearchTime": 1015.31,
+      "resultsDisplayed": 29,
+      "domNodeCount": 261,
+      "cacheImprovement": 23.09
+    },
+    "react": {
+      "coldSearchTime": 1172.46,
+      "cachedSearchTime": 963.28,
+      "resultsDisplayed": 29,
+      "domNodeCount": 261,
+      "cacheImprovement": 17.36
+    }
+  }
+}

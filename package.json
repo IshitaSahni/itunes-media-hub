@@ -1,0 +1,28 @@
+{
+  "name": "itunes-media-hub",
+  "version": "1.0.0",
+  "description": "Comparative study of Vanilla JavaScript and React through two identical iTunes Media Discovery applications, evaluating performance, architecture, and maintainability.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IshitaSahni/itunes-media-hub.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/IshitaSahni/itunes-media-hub/issues"
+  },
+  "homepage": "https://github.com/IshitaSahni/itunes-media-hub#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
+  },
+  "dependencies": {
+    "playwright": "^1.64.1",
+    "playwright-core": "^1.64.1"
+  }
+}

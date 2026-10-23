@@ -1,0 +1,86 @@
+{
+  "timestamp": "2026-10-23T20:19:47.779Z",
+  "methodology": "Static HTML, JavaScript and CSS file sizes. Gzip is calculated per file. This is not measured network transfer size.",
+  "results": {
+    "vanilla": {
+      "directory": "vanilla-app",
+      "files": [
+        {
+          "file": "app.js",
+          "type": "javascript",
+          "rawBytes": 24112,
+          "gzipBytes": 5569
+        },
+        {
+          "file": "index.html",
+          "type": "html",
+          "rawBytes": 9908,
+          "gzipBytes": 2310
+        },
+        {
+          "file": "style.css",
+          "type": "css",
+          "rawBytes": 18361,
+          "gzipBytes": 3903
+        }
+      ],
+      "totals": {
+        "fileCount": 3,
+        "rawBytes": 52381,
+        "gzipBytes": 11782,
+        "javascriptBytes": 24112,
+        "cssBytes": 18361,
+        "htmlBytes": 9908
+      }
+    },
+    "react": {
+      "directory": "react-app/dist",
+      "files": [
+        {
+          "file": "assets/index-DzywMfUT.js",
+          "type": "javascript",
+          "rawBytes": 234017,
+          "gzipBytes": 72275
+        },
+        {
+          "file": "assets/index-Kr3NnL6C.css",
+          "type": "css",
+          "rawBytes": 11230,
+          "gzipBytes": 3214
+        },
+        {
+          "file": "index.html",
+          "type": "html",
+          "rawBytes": 550,
+          "gzipBytes": 327
+        }
+      ],
+      "totals": {
+        "fileCount": 3,
+        "rawBytes": 245797,
+        "gzipBytes": 75816,
+        "javascriptBytes": 234017,
+        "cssBytes": 11230,
+        "htmlBytes": 550
+      }
+    }
+  },
+  "summary": {
+    "vanilla": {
+      "fileCount": 3,
+      "totalKB": 51.15,
+      "gzipKB": 11.51,
+      "javascriptKB": 23.55,
+      "cssKB": 17.93,
+      "htmlKB": 9.68
+    },
+    "react": {
+      "fileCount": 3,
+      "totalKB": 240.04,
+      "gzipKB": 74.04,
+      "javascriptKB": 228.53,
+      "cssKB": 10.97,
+      "htmlKB": 0.54
+    }
+  }
+}

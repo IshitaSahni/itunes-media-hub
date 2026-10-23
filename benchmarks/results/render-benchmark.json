@@ -1,0 +1,159 @@
+{
+  "timestamp": "2026-10-23T20:09:51.495Z",
+  "runsPerApp": 10,
+  "fixtureResultCount": 29,
+  "rawResults": [
+    {
+      "app": "vanilla",
+      "run": 1,
+      "renderCompletionMs": 152.78,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 2,
+      "renderCompletionMs": 191.17,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 3,
+      "renderCompletionMs": 141.03,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 4,
+      "renderCompletionMs": 178.57,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 5,
+      "renderCompletionMs": 151.21,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 6,
+      "renderCompletionMs": 193,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 7,
+      "renderCompletionMs": 167.94,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 8,
+      "renderCompletionMs": 125.7,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 9,
+      "renderCompletionMs": 128.93,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "vanilla",
+      "run": 10,
+      "renderCompletionMs": 140.5,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 1,
+      "renderCompletionMs": 128.12,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 2,
+      "renderCompletionMs": 148.32,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 3,
+      "renderCompletionMs": 123.36,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 4,
+      "renderCompletionMs": 196.95,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 5,
+      "renderCompletionMs": 113.32,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 6,
+      "renderCompletionMs": 118.25,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 7,
+      "renderCompletionMs": 178.92,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 8,
+      "renderCompletionMs": 167.46,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 9,
+      "renderCompletionMs": 164.84,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    },
+    {
+      "app": "react",
+      "run": 10,
+      "renderCompletionMs": 157.68,
+      "cardCount": 29,
+      "interceptedRequests": 1
+    }
+  ],
+  "summary": {
+    "vanilla": {
+      "successfulRuns": 10,
+      "averageRenderCompletionMs": 157.08,
+      "averageCardCount": 29
+    },
+    "react": {
+      "successfulRuns": 10,
+      "averageRenderCompletionMs": 149.72,
+      "averageCardCount": 29
+    }
+  }
+}
