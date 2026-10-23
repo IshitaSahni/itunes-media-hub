@@ -10,7 +10,19 @@ const COLORS = {
   grid: "rgba(155, 170, 197, 0.15)",
 };
 
-const chartInstances = [];
+const chartInstances = new Map();
+
+let dashboardData = null;
+let selectedStatistic = "mean";
+
+const STATISTICS_ROWS = [
+  ["Page Load", "pageLoad"],
+  ["DOM Content Loaded", "domContentLoaded"],
+  ["Cold Search", "coldSearch"],
+  ["Repeated Search", "cachedSearch"],
+  ["Render Completion", "renderCompletion"],
+  ["Cache Improvement", "cacheImprovement"],
+];
 
 function getElement(id) {
   const element = document.getElementById(id);
@@ -42,9 +54,24 @@ function getMetric(data, key) {
   return metric;
 }
 
+function metricValue(data, key, app, statistic = selectedStatistic) {
+  const metric = getMetric(data, key);
+  const value = Number(metric[app][statistic]);
+
+  if (!Number.isFinite(value)) {
+    throw new Error(
+      `Invalid ${statistic} value for ${app}: ${key}`
+    );
+  }
+
+  return value;
+}
+
 function updateSummaryCards(data) {
   const pageLoad = getMetric(data, "pageLoad");
 
+  // Summary cards deliberately show means regardless
+  // of the interactive selector.
   getElement("vanilla-load").textContent =
     `${formatNumber(pageLoad.vanilla.mean)} ms`;
 
@@ -78,7 +105,10 @@ function chartOptions(unit) {
       tooltip: {
         callbacks: {
           label(context) {
-            return `${context.dataset.label}: ${formatNumber(context.parsed.y)} ${unit}`;
+            return (
+              `${context.dataset.label}: ` +
+              `${formatNumber(context.parsed.y)} ${unit}`
+            );
           },
         },
       },
@@ -110,10 +140,20 @@ function chartOptions(unit) {
   };
 }
 
-function createComparisonChart(canvasId, labels, vanilla, react, unit) {
-  const canvas = getElement(canvasId);
+function createComparisonChart(
+  canvasId,
+  labels,
+  vanilla,
+  react,
+  unit
+) {
+  const existingChart = chartInstances.get(canvasId);
 
-  const chart = new Chart(canvas, {
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
+  const chart = new Chart(getElement(canvasId), {
     type: "bar",
     data: {
       labels,
@@ -137,7 +177,7 @@ function createComparisonChart(canvasId, labels, vanilla, react, unit) {
     options: chartOptions(unit),
   });
 
-  chartInstances.push(chart);
+  chartInstances.set(canvasId, chart);
 }
 
 function renderPerformanceCharts(data) {
@@ -147,27 +187,32 @@ function renderPerformanceCharts(data) {
     "renderCompletion",
   ];
 
-  const loadingLabels = [
-    "Page Load",
-    "DOM Ready",
-    "Render Completion",
-  ];
-
   createComparisonChart(
     "load-chart",
-    loadingLabels,
-    loadingKeys.map((key) => getMetric(data, key).vanilla.mean),
-    loadingKeys.map((key) => getMetric(data, key).react.mean),
+    ["Page Load", "DOM Ready", "Render Completion"],
+    loadingKeys.map((key) =>
+      metricValue(data, key, "vanilla")
+    ),
+    loadingKeys.map((key) =>
+      metricValue(data, key, "react")
+    ),
     "ms"
   );
 
-  const searchKeys = ["coldSearch", "cachedSearch"];
+  const searchKeys = [
+    "coldSearch",
+    "cachedSearch",
+  ];
 
   createComparisonChart(
     "search-chart",
     ["Cold Search", "Repeated Search"],
-    searchKeys.map((key) => getMetric(data, key).vanilla.mean),
-    searchKeys.map((key) => getMetric(data, key).react.mean),
+    searchKeys.map((key) =>
+      metricValue(data, key, "vanilla")
+    ),
+    searchKeys.map((key) =>
+      metricValue(data, key, "react")
+    ),
     "ms"
   );
 }
@@ -176,12 +221,19 @@ function renderBundleCharts(data) {
   createComparisonChart(
     "bundle-chart",
     ["Uncompressed", "Gzip"],
-    [data.bundle.vanilla.rawKB, data.bundle.vanilla.gzipKB],
-    [data.bundle.react.rawKB, data.bundle.react.gzipKB],
+    [
+      data.bundle.vanilla.rawKB,
+      data.bundle.vanilla.gzipKB,
+    ],
+    [
+      data.bundle.react.rawKB,
+      data.bundle.react.gzipKB,
+    ],
     "KB"
   );
 
-  const bytesToKB = (bytes) => Number((bytes / 1024).toFixed(2));
+  const bytesToKB = (bytes) =>
+    Number((Number(bytes) / 1024).toFixed(2));
 
   createComparisonChart(
     "assets-chart",
@@ -206,35 +258,116 @@ function createCell(value) {
   return cell;
 }
 
-function renderStatisticsTable(data) {
-  const rows = [
-    ["Page Load", "pageLoad"],
-    ["DOM Content Loaded", "domContentLoaded"],
-    ["Cold Search", "coldSearch"],
-    ["Repeated Search", "cachedSearch"],
-    ["Render Completion", "renderCompletion"],
-    ["Cache Improvement", "cacheImprovement"],
-  ];
+function formatMetricValue(value, unit) {
+  const suffix = unit === "%" ? "%" : ` ${unit}`;
+  return `${formatNumber(value)}${suffix}`;
+}
 
+function renderStatisticsTable(data) {
   const tbody = getElement("metrics-table");
   tbody.replaceChildren();
 
-  for (const [label, key] of rows) {
+  for (const [label, key] of STATISTICS_ROWS) {
     const metric = getMetric(data, key);
     const row = document.createElement("tr");
 
-    const suffix = metric.unit === "%" ? "%" : ` ${metric.unit}`;
-
     row.append(
       createCell(label),
-      createCell(`${formatNumber(metric.vanilla.mean)}${suffix}`),
-      createCell(`${formatNumber(metric.react.mean)}${suffix}`),
-      createCell(`${formatNumber(metric.vanilla.standardDeviation)}${suffix}`),
-      createCell(`${formatNumber(metric.react.standardDeviation)}${suffix}`)
+      createCell(
+        formatMetricValue(
+          metricValue(data, key, "vanilla"),
+          metric.unit
+        )
+      ),
+      createCell(
+        formatMetricValue(
+          metricValue(data, key, "react"),
+          metric.unit
+        )
+      ),
+      createCell(
+        formatMetricValue(
+          metric.vanilla.standardDeviation,
+          metric.unit
+        )
+      ),
+      createCell(
+        formatMetricValue(
+          metric.react.standardDeviation,
+          metric.unit
+        )
+      )
     );
 
     tbody.appendChild(row);
   }
+}
+
+function updateStatisticLabels() {
+  const isMedian = selectedStatistic === "median";
+  const label = isMedian ? "Median" : "Mean";
+
+  getElement("statistic-description").textContent =
+    isMedian
+      ? "Median: the middle value of the observed runs, less sensitive to unusually slow measurements."
+      : "Mean: the arithmetic average of all observed runs.";
+
+  getElement("loading-chart-description").textContent =
+    `${label} duration in milliseconds`;
+
+  getElement("search-chart-description").textContent =
+    `${label} cold and repeated search duration`;
+
+  getElement("table-description").textContent =
+    `${label} values alongside standard deviations`;
+
+  getElement("vanilla-stat-heading").textContent =
+    `Vanilla JS ${label}`;
+
+  getElement("react-stat-heading").textContent =
+    `React ${label}`;
+
+  document
+    .querySelectorAll("[data-statistic]")
+    .forEach((button) => {
+      const isActive =
+        button.dataset.statistic === selectedStatistic;
+
+      button.classList.toggle("active", isActive);
+
+      button.setAttribute(
+        "aria-pressed",
+        String(isActive)
+      );
+    });
+}
+
+function setStatistic(statistic) {
+  if (!["mean", "median"].includes(statistic)) {
+    return;
+  }
+
+  if (!dashboardData) {
+    return;
+  }
+
+  selectedStatistic = statistic;
+
+  updateStatisticLabels();
+  renderPerformanceCharts(dashboardData);
+  renderStatisticsTable(dashboardData);
+}
+
+function initializeStatisticSelector() {
+  document
+    .querySelectorAll("[data-statistic]")
+    .forEach((button) => {
+      button.addEventListener("click", () => {
+        setStatistic(button.dataset.statistic);
+      });
+    });
+
+  updateStatisticLabels();
 }
 
 function renderMethodology(data) {
@@ -245,7 +378,7 @@ function renderMethodology(data) {
   }
 
   getElement("run-counts").textContent =
-    `Runs per application: ` +
+    "Runs per application: " +
     `${methodology.baselineRunsPerApp} baseline, ` +
     `${methodology.searchRunsPerApp} search, ` +
     `${methodology.renderingRunsPerApp} rendering.`;
@@ -261,6 +394,26 @@ function validateData(data) {
       throw new Error(`Missing bundle data for ${app}`);
     }
   }
+
+  const requiredMetrics = [
+    ...new Set(STATISTICS_ROWS.map((row) => row[1])),
+  ];
+
+  for (const key of requiredMetrics) {
+    for (const app of ["vanilla", "react"]) {
+      for (const statistic of ["mean", "median"]) {
+        const value = Number(
+          getMetric(data, key)[app][statistic]
+        );
+
+        if (!Number.isFinite(value)) {
+          throw new Error(
+            `Missing ${statistic} for ${app}: ${key}`
+          );
+        }
+      }
+    }
+  }
 }
 
 async function initializeDashboard() {
@@ -268,6 +421,8 @@ async function initializeDashboard() {
 
   try {
     status.textContent = "Loading benchmark data…";
+
+    initializeStatisticSelector();
 
     const response = await fetch(DATA_URL, {
       cache: "no-store",
@@ -280,6 +435,7 @@ async function initializeDashboard() {
     }
 
     const data = await response.json();
+
     validateData(data);
 
     if (typeof Chart === "undefined") {
@@ -288,11 +444,14 @@ async function initializeDashboard() {
       );
     }
 
+    dashboardData = data;
+
     updateSummaryCards(data);
     renderPerformanceCharts(data);
     renderBundleCharts(data);
     renderStatisticsTable(data);
     renderMethodology(data);
+    updateStatisticLabels();
 
     status.textContent = "Benchmark data loaded";
     status.style.color = "#82dfb1";
@@ -300,7 +459,10 @@ async function initializeDashboard() {
     console.log("Dashboard initialized successfully.");
     console.log("Benchmark data:", data);
   } catch (error) {
-    console.error("Dashboard initialization failed:", error);
+    console.error(
+      "Dashboard initialization failed:",
+      error
+    );
 
     status.textContent = "Unable to load benchmark data";
     status.style.color = "#ff9a9a";
@@ -322,4 +484,7 @@ async function initializeDashboard() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", initializeDashboard);
+document.addEventListener(
+  "DOMContentLoaded",
+  initializeDashboard
+);
