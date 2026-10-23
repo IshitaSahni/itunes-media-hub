@@ -832,3 +832,29 @@ input:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* Step 5.3: Artwork and card refinements */
+
+.media-artwork {
+  color: var(--text-secondary);
+}
+
+.media-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.media-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.media-meta {
+  margin-top: auto;
+}
+
+.media-preview-btn {
+  margin-top: 8px;
+}
