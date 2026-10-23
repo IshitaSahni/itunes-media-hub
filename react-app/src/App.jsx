@@ -1,4 +1,10 @@
-import { useState } from "react";
+import {
+  Profiler,
+  useCallback,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -9,6 +15,11 @@ import AudioPlayer from "./components/AudioPlayer";
 
 import useItunesSearch from "./hooks/useItunesSearch";
 import useAudioPlayer from "./hooks/useAudioPlayer";
+
+import {
+  countDOMNodes,
+  formatMilliseconds,
+} from "./utils/performance";
 
 import "./App.css";
 
@@ -22,6 +33,8 @@ function App() {
     error,
     hasSearched,
     searchMetrics,
+    completedSearch,
+    markResultsDisplayed,
     search,
     changeCategory,
   } = useItunesSearch();
@@ -38,19 +51,73 @@ function App() {
     changeVolume,
   } = useAudioPlayer();
 
-  const [isBenchmarkOpen, setIsBenchmarkOpen] = useState(false);
+  const [isBenchmarkOpen, setIsBenchmarkOpen] =
+    useState(false);
+
+  const [renderMetrics, setRenderMetrics] = useState({
+    renderTime: "—",
+    domNodeCount: 0,
+  });
+
+  const gridRef = useRef(null);
+  const profilerDurationRef = useRef(null);
+  const measuredSearchRef = useRef(null);
+
+  const handleRender = useCallback(
+    (id, phase, actualDuration) => {
+      if (id === "media-results" &&
+          (phase === "mount" || phase === "update")) {
+        profilerDurationRef.current = actualDuration;
+      }
+    },
+    []
+  );
+
+  useLayoutEffect(() => {
+    if (!completedSearch) {
+      return;
+    }
+
+    if (
+      measuredSearchRef.current ===
+      completedSearch.requestId
+    ) {
+      return;
+    }
+
+    measuredSearchRef.current =
+      completedSearch.requestId;
+
+    const nodeCount = countDOMNodes(gridRef.current);
+
+    const elapsedTime =
+      performance.now() - completedSearch.startTime;
+
+    setRenderMetrics({
+      renderTime: formatMilliseconds(
+        profilerDurationRef.current
+      ),
+      domNodeCount: nodeCount,
+    });
+
+    markResultsDisplayed(
+      completedSearch.requestId,
+      elapsedTime
+    );
+  }, [completedSearch, markResultsDisplayed]);
 
   const metrics = {
     ...searchMetrics,
     resultsDisplayed: items.length,
-    renderTime: "—",
-    domNodeCount: 0,
+    ...renderMetrics,
   };
 
   return (
     <>
       <Header
-        onOpenBenchmarks={() => setIsBenchmarkOpen(true)}
+        onOpenBenchmarks={() =>
+          setIsBenchmarkOpen(true)
+        }
       />
 
       <main className="app-container">
@@ -86,22 +153,32 @@ function App() {
           onCategoryChange={changeCategory}
         />
 
-        <MediaGrid
-          items={items}
-          query={query}
-          activeCategory={activeCategory}
-          loading={loading}
-          error={error}
-          hasSearched={hasSearched}
-          onPlayPreview={playPreview}
-          currentPreviewUrl={currentTrack?.previewUrl ?? null}
-          isPlaying={isPlaying}
-        />
+        <Profiler
+          id="media-results"
+          onRender={handleRender}
+        >
+          <MediaGrid
+            ref={gridRef}
+            items={items}
+            query={query}
+            activeCategory={activeCategory}
+            loading={loading}
+            error={error}
+            hasSearched={hasSearched}
+            onPlayPreview={playPreview}
+            currentPreviewUrl={
+              currentTrack?.previewUrl ?? null
+            }
+            isPlaying={isPlaying}
+          />
+        </Profiler>
       </main>
 
       <BenchmarkDrawer
         isOpen={isBenchmarkOpen}
-        onClose={() => setIsBenchmarkOpen(false)}
+        onClose={() =>
+          setIsBenchmarkOpen(false)
+        }
         metrics={metrics}
       />
 

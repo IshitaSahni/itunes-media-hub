@@ -1,16 +1,20 @@
+import { forwardRef } from "react";
 import MediaCard from "./MediaCard";
 
-function MediaGrid({
-  items,
-  query,
-  activeCategory,
-  loading,
-  error,
-  hasSearched,
-  onPlayPreview,
-  currentPreviewUrl,
-  isPlaying,
-}) {
+const MediaGrid = forwardRef(function MediaGrid(
+  {
+    items,
+    query,
+    activeCategory,
+    loading,
+    error,
+    hasSearched,
+    onPlayPreview,
+    currentPreviewUrl,
+    isPlaying,
+  },
+  ref
+) {
   const categoryLabels = {
     all: "All Media",
     music: "Songs",
@@ -40,7 +44,10 @@ function MediaGrid({
   }
 
   return (
-    <section className="results-section" aria-label="Media search results">
+    <section
+      className="results-section"
+      aria-label="Media search results"
+    >
       <div className="results-header">
         <div>
           <h2 id="results-title">{resultsTitle}</h2>
@@ -64,7 +71,11 @@ function MediaGrid({
         </p>
       )}
 
-      <div id="media-grid" className="media-grid">
+      <div
+        id="media-grid"
+        className="media-grid"
+        ref={ref}
+      >
         {items.map((item, index) => (
           <MediaCard
             key={`${item.trackId || item.collectionId || "media"}-${index}`}
@@ -77,6 +88,6 @@ function MediaGrid({
       </div>
     </section>
   );
-}
+});
 
 export default MediaGrid;

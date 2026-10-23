@@ -1,18 +1,28 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
-import { searchItunes } from "../services/itunesApi.js";
+import { searchItunes } from "../services/itunesApi";
 import {
   getCachedResults,
   setCachedResults,
-} from "../utils/cache.js";
+} from "../utils/cache";
 
 export default function useItunesSearch() {
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState("all");
+  const [activeCategory, setActiveCategory] =
+    useState("all");
+
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [hasSearched, setHasSearched] = useState(false);
+
+  const [completedSearch, setCompletedSearch] =
+    useState(null);
 
   const [searchMetrics, setSearchMetrics] = useState({
     apiTime: "—",
@@ -42,6 +52,7 @@ export default function useItunesSearch() {
         setLoading(false);
         setError(null);
         setHasSearched(false);
+        setCompletedSearch(null);
         return;
       }
 
@@ -49,6 +60,7 @@ export default function useItunesSearch() {
 
       setLoading(true);
       setError(null);
+      setCompletedSearch(null);
 
       const cachedResults = getCachedResults(
         trimmedQuery,
@@ -58,23 +70,27 @@ export default function useItunesSearch() {
       if (cachedResults !== null) {
         hitsRef.current += 1;
 
-        const totalTime = performance.now() - startTime;
-
         setItems(cachedResults);
         setHasSearched(true);
         setLoading(false);
 
-        setSearchMetrics({
+        setCompletedSearch({
+          requestId,
+          startTime,
+        });
+
+        setSearchMetrics((previous) => ({
+          ...previous,
           apiTime: "Cached",
           cacheHits: hitsRef.current,
           cacheMisses: missesRef.current,
-          totalSearchTime: `${totalTime.toFixed(2)} ms`,
+          totalSearchTime: "Measuring...",
           cacheHitRate: `${(
             (hitsRef.current /
               (hitsRef.current + missesRef.current)) *
             100
           ).toFixed(1)}%`,
-        });
+        }));
 
         return;
       }
@@ -97,31 +113,40 @@ export default function useItunesSearch() {
           return;
         }
 
-        const apiTime = performance.now() - apiStartTime;
-        const totalTime = performance.now() - startTime;
+        const apiTime =
+          performance.now() - apiStartTime;
 
-        setCachedResults(trimmedQuery, category, results);
+        setCachedResults(
+          trimmedQuery,
+          category,
+          results
+        );
 
         setItems(results);
         setHasSearched(true);
 
-        setSearchMetrics({
+        setCompletedSearch({
+          requestId,
+          startTime,
+        });
+
+        setSearchMetrics((previous) => ({
+          ...previous,
           apiTime: `${apiTime.toFixed(2)} ms`,
           cacheHits: hitsRef.current,
           cacheMisses: missesRef.current,
-          totalSearchTime: `${totalTime.toFixed(2)} ms`,
+          totalSearchTime: "Measuring...",
           cacheHitRate: `${(
             (hitsRef.current /
               (hitsRef.current + missesRef.current)) *
             100
           ).toFixed(1)}%`,
-        });
+        }));
       } catch (err) {
-        if (err.name === "AbortError") {
-          return;
-        }
-
-        if (requestId !== requestIdRef.current) {
+        if (
+          err.name === "AbortError" ||
+          requestId !== requestIdRef.current
+        ) {
           return;
         }
 
@@ -130,11 +155,26 @@ export default function useItunesSearch() {
           "Unable to load media. Please try again."
         );
         setHasSearched(true);
+        setCompletedSearch(null);
       } finally {
         if (requestId === requestIdRef.current) {
           setLoading(false);
         }
       }
+    },
+    []
+  );
+
+  const markResultsDisplayed = useCallback(
+    (requestId, elapsedTime) => {
+      if (requestId !== requestIdRef.current) {
+        return;
+      }
+
+      setSearchMetrics((previous) => ({
+        ...previous,
+        totalSearchTime: `${elapsedTime.toFixed(2)} ms`,
+      }));
     },
     []
   );
@@ -146,12 +186,8 @@ export default function useItunesSearch() {
   const changeCategory = useCallback(
     (category) => {
       setActiveCategory(category);
-
-      if (query.trim()) {
-        executeSearch(query, category);
-      }
     },
-    [query, executeSearch]
+    []
   );
 
   useEffect(() => {
@@ -164,6 +200,7 @@ export default function useItunesSearch() {
       setLoading(false);
       setHasSearched(false);
       setError(null);
+      setCompletedSearch(null);
       return;
     }
 
@@ -192,6 +229,8 @@ export default function useItunesSearch() {
     error,
     hasSearched,
     searchMetrics,
+    completedSearch,
+    markResultsDisplayed,
     search,
     changeCategory,
   };
