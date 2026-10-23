@@ -1,0 +1,493 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="description"
+    content="iTunes All-In-One Media Hub — Explore music, podcasts, audiobooks, and music videos."
+  />
+
+  <title>iTunes Media Hub | Vanilla JavaScript</title>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+  <!-- =====================================
+       APPLICATION HEADER
+       ===================================== -->
+
+  <header class="app-header">
+    <div class="header-content">
+
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">♫</div>
+
+        <div class="brand-text">
+          <h1>iTunes Media Hub</h1>
+          <p>Discover. Explore. Listen.</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span class="tech-badge">Vanilla JavaScript</span>
+
+        <button
+          id="benchmark-btn"
+          class="benchmark-btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="benchmark-drawer"
+        >
+          View Benchmarks
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+
+  <!-- =====================================
+       MAIN APPLICATION
+       ===================================== -->
+
+  <main class="app-container">
+
+    <!-- HERO SECTION -->
+
+    <section class="hero-section">
+      <div class="hero-content">
+
+        <span class="hero-label">
+          ALL YOUR MEDIA. ONE PLACE.
+        </span>
+
+        <h2>
+          Explore a world of
+          <span class="gradient-text">entertainment.</span>
+        </h2>
+
+        <p class="hero-description">
+          Search songs, podcasts, audiobooks, and music videos
+          from the iTunes catalogue — all in one place.
+        </p>
+
+      </div>
+    </section>
+
+
+    <!-- SEARCH SECTION -->
+
+    <section class="search-section" aria-label="Search media">
+
+      <form id="search-form" class="search-form">
+
+        <div class="search-input-wrapper">
+
+          <span class="search-icon" aria-hidden="true">⌕</span>
+
+          <input
+            id="search-input"
+            class="search-input"
+            type="search"
+            placeholder="Search artists, songs, podcasts..."
+            aria-label="Search iTunes media"
+            autocomplete="off"
+          />
+
+          <button
+            id="search-btn"
+            class="search-btn"
+            type="submit"
+          >
+            Search
+          </button>
+
+        </div>
+
+      </form>
+
+      <p class="search-hint">
+        Discover your next favourite track, podcast, or story.
+      </p>
+
+    </section>
+
+
+    <!-- MEDIA CATEGORY FILTERS -->
+
+    <section
+      class="categories-section"
+      aria-label="Media categories"
+    >
+
+      <div class="category-filters">
+
+        <button
+          class="category-btn active"
+          type="button"
+          data-category="all"
+          aria-pressed="true"
+        >
+          All Media
+        </button>
+
+        <button
+          class="category-btn"
+          type="button"
+          data-category="music"
+          aria-pressed="false"
+        >
+          Songs
+        </button>
+
+        <button
+          class="category-btn"
+          type="button"
+          data-category="podcast"
+          aria-pressed="false"
+        >
+          Podcasts
+        </button>
+
+        <button
+          class="category-btn"
+          type="button"
+          data-category="audiobook"
+          aria-pressed="false"
+        >
+          Audiobooks
+        </button>
+
+        <button
+          class="category-btn"
+          type="button"
+          data-category="musicVideo"
+          aria-pressed="false"
+        >
+          Music Videos
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- SEARCH RESULTS -->
+
+    <section
+      class="results-section"
+      aria-label="Media search results"
+    >
+
+      <div class="results-header">
+
+        <div>
+          <h2 id="results-title">Discover Media</h2>
+          <p id="results-count"></p>
+        </div>
+
+      </div>
+
+      <p
+        id="status-message"
+        class="status-message"
+        role="status"
+        aria-live="polite"
+      >
+        Enter a search term to explore media.
+      </p>
+
+      <div
+        id="media-grid"
+        class="media-grid"
+      ></div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =====================================
+       BENCHMARK DRAWER
+       ===================================== -->
+
+  <aside
+    id="benchmark-drawer"
+    class="benchmark-drawer"
+    aria-label="Performance benchmarks"
+    hidden
+  >
+
+    <div class="benchmark-header">
+
+      <div>
+        <h2>Performance Monitor</h2>
+        <p>Live application metrics</p>
+      </div>
+
+      <button
+        id="close-benchmark-btn"
+        class="close-benchmark-btn"
+        type="button"
+        aria-label="Close performance monitor"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="benchmark-content">
+
+      <!-- API Response Time -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          API Response Time
+        </span>
+
+        <strong id="api-time" class="metric-value">
+          —
+        </strong>
+      </div>
+
+
+      <!-- Cache Hits -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Cache Hits
+        </span>
+
+        <strong id="cache-hits" class="metric-value">
+          0
+        </strong>
+      </div>
+
+
+      <!-- Cache Misses -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Cache Misses
+        </span>
+
+        <strong id="cache-misses" class="metric-value">
+          0
+        </strong>
+      </div>
+
+
+      <!-- Results Displayed -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Results Displayed
+        </span>
+
+        <strong id="benchmark-results" class="metric-value">
+          0
+        </strong>
+      </div>
+
+
+      <!-- NEW: DOM Render Time -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          DOM Render Time
+        </span>
+
+        <strong id="render-time" class="metric-value">
+          —
+        </strong>
+      </div>
+
+
+      <!-- NEW: DOM Node Count -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          DOM Node Count
+        </span>
+
+        <strong id="dom-node-count" class="metric-value">
+          0
+        </strong>
+      </div>
+
+
+      <!-- NEW: Search-to-Display Time -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Search-to-Display Time
+        </span>
+
+        <strong id="total-search-time" class="metric-value">
+          —
+        </strong>
+      </div>
+
+
+      <!-- NEW: Cache Hit Rate -->
+
+      <div class="benchmark-metric">
+        <span class="metric-label">
+          Cache Hit Rate
+        </span>
+
+        <strong id="cache-hit-rate" class="metric-value">
+          0%
+        </strong>
+      </div>
+
+    </div>
+
+
+    <div class="benchmark-footer">
+
+      <p>
+        Search requests are optimized using
+        500ms debouncing, localStorage caching,
+        and request cancellation.
+      </p>
+
+      <p>
+        Rendering and search metrics are measured
+        using the browser Performance API.
+      </p>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =====================================
+       PERSISTENT AUDIO PLAYER
+       ===================================== -->
+
+  <section
+    id="audio-player-bar"
+    class="audio-player-bar"
+    aria-label="Audio preview player"
+    hidden
+  >
+
+    <!-- CURRENT TRACK -->
+
+    <div class="player-track">
+
+      <img
+        id="player-artwork"
+        class="player-artwork"
+        alt="Track artwork"
+      />
+
+      <div class="player-track-info">
+
+        <h3 id="player-title">
+          No track selected
+        </h3>
+
+        <p id="player-artist">
+          Select a preview to play
+        </p>
+
+      </div>
+
+    </div>
+
+
+    <!-- PLAYBACK CONTROLS -->
+
+    <div class="player-main">
+
+      <button
+        id="player-play-btn"
+        class="player-play-btn"
+        type="button"
+        aria-label="Play or pause"
+      >
+        ▶
+      </button>
+
+
+      <!-- PROGRESS BAR -->
+
+      <div class="player-progress">
+
+        <span id="player-current-time">
+          0:00
+        </span>
+
+        <input
+          id="player-seek"
+          type="range"
+          min="0"
+          max="100"
+          value="0"
+          aria-label="Seek through preview"
+        />
+
+        <span id="player-duration">
+          0:00
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <!-- VOLUME CONTROL -->
+
+    <div class="player-volume">
+
+      <span aria-hidden="true">🔊</span>
+
+      <input
+        id="player-volume"
+        type="range"
+        min="0"
+        max="100"
+        value="80"
+        aria-label="Volume"
+      />
+
+    </div>
+
+  </section>
+
+
+  <!-- =====================================
+       FOOTER
+       ===================================== -->
+
+  <footer class="app-footer">
+
+    <p>
+      iTunes All-In-One Media Hub
+      <span aria-hidden="true">•</span>
+      Built with Vanilla JavaScript
+    </p>
+
+    <p>
+      Media data provided by the iTunes Search API.
+    </p>
+
+  </footer>
+
+
+  <!-- =====================================
+       JAVASCRIPT
+       ===================================== -->
+
+  <script src="app.js"></script>
+
+</body>
+</html>
