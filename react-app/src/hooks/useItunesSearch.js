@@ -191,27 +191,22 @@ export default function useItunesSearch() {
   );
 
   useEffect(() => {
-    clearTimeout(timerRef.current);
+  clearTimeout(timerRef.current);
 
-    if (!query.trim()) {
-      controllerRef.current?.abort();
-      requestIdRef.current += 1;
-      setItems([]);
-      setLoading(false);
-      setHasSearched(false);
-      setError(null);
-      setCompletedSearch(null);
-      return;
-    }
-
+  if (!query.trim()) {
+    timerRef.current = setTimeout(() => {
+      executeSearch("", activeCategory);
+    }, 0);
+  } else {
     timerRef.current = setTimeout(() => {
       executeSearch(query, activeCategory);
     }, 500);
+  }
 
-    return () => {
-      clearTimeout(timerRef.current);
-    };
-  }, [query, activeCategory, executeSearch]);
+  return () => {
+    clearTimeout(timerRef.current);
+  };
+}, [query, activeCategory, executeSearch]);
 
   useEffect(() => {
     return () => {
