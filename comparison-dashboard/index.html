@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Performance comparison of Vanilla JavaScript and React iTunes Media Hub applications." />
+  <title>Vanilla JS vs React | Performance Dashboard</title>
+  <link rel="stylesheet" href="./style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-icon">◈</span>
+        <span>iTunes Media Hub <span class="brand-muted">/ Benchmark Lab</span></span>
+      </div>
+      <nav aria-label="Main navigation">
+        <a href="#overview">Overview</a>
+        <a href="#performance">Performance</a>
+        <a href="#bundle">Bundle Size</a>
+        <a href="#findings">Findings</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero" id="overview">
+      <div class="eyebrow">FRAMEWORK PERFORMANCE STUDY</div>
+      <h1>Vanilla JavaScript <span class="versus">vs</span> React</h1>
+      <p class="hero-description">
+        Two implementations. One media discovery experience.
+        Explore measured performance, search behaviour, rendering,
+        and application size using repeatable browser benchmarks.
+      </p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#performance">Explore Benchmarks →</a>
+        <a class="button button-secondary" href="#findings">Read Findings</a>
+      </div>
+      <div class="hero-meta">
+        <span>● Playwright + Chromium</span>
+        <span>● iTunes Search API</span>
+        <span>● Real benchmark data</span>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="summary-heading">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">AT A GLANCE</div>
+          <h2 id="summary-heading">Benchmark Summary</h2>
+        </div>
+        <span class="data-status" id="data-status" role="status">Loading benchmark data…</span>
+      </div>
+
+      <div class="stats-grid" id="summary-cards">
+        <article class="stat-card">
+          <div class="stat-label">Vanilla JS Page Load</div>
+          <div class="stat-value" id="vanilla-load">—</div>
+          <div class="stat-note">Average across browser runs</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">React Page Load</div>
+          <div class="stat-value" id="react-load">—</div>
+          <div class="stat-note">Average across browser runs</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">Vanilla JS Gzip Size</div>
+          <div class="stat-value" id="vanilla-gzip">—</div>
+          <div class="stat-note">Estimated HTML + CSS + JS</div>
+        </article>
+        <article class="stat-card">
+          <div class="stat-label">React Gzip Size</div>
+          <div class="stat-value" id="react-gzip">—</div>
+          <div class="stat-note">Estimated HTML + CSS + JS</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="performance">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">BROWSER BENCHMARKS</div>
+          <h2>Performance Comparison</h2>
+        </div>
+        <p class="section-subtitle">Lower times indicate faster completion under the tested conditions.</p>
+      </div>
+
+      <div class="chart-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Loading & Rendering</h3>
+            <p>Average duration in milliseconds</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="load-chart" aria-label="Loading and rendering comparison chart" role="img"></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Search Performance</h3>
+            <p>Cold versus repeated search, in milliseconds</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="search-chart" aria-label="Search performance comparison chart" role="img"></canvas>
+          </div>
+        </article>
+      </div>
+
+      <article class="panel table-panel">
+        <div class="panel-heading">
+          <h3>Detailed Benchmark Statistics</h3>
+          <p>Means and standard deviations from repeated runs</p>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Metric</th>
+                <th>Vanilla JS Mean</th>
+                <th>React Mean</th>
+                <th>Vanilla JS Std. Dev.</th>
+                <th>React Std. Dev.</th>
+              </tr>
+            </thead>
+            <tbody id="metrics-table">
+              <tr><td colspan="5">Loading measurements…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+    </section>
+
+    <section class="section" id="bundle">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">APPLICATION FOOTPRINT</div>
+          <h2>Bundle Size Analysis</h2>
+        </div>
+        <p class="section-subtitle">Measured HTML, CSS and JavaScript files only.</p>
+      </div>
+
+      <div class="chart-grid">
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Uncompressed vs Gzip</h3>
+            <p>Size in KB (1024 bytes)</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="bundle-chart" aria-label="Bundle size comparison chart" role="img"></canvas>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h3>Asset Breakdown</h3>
+            <p>HTML, JavaScript and CSS sizes in KB</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="assets-chart" aria-label="Asset breakdown comparison chart" role="img"></canvas>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="findings">
+      <div class="section-heading">
+        <div>
+          <div class="eyebrow">INTERPRETATION</div>
+          <h2>Key Findings & Limitations</h2>
+        </div>
+      </div>
+
+      <div class="findings-grid">
+        <article class="finding-card">
+          <span class="finding-number">01</span>
+          <h3>Observed Timing</h3>
+          <p>
+            React recorded slightly lower average loading and controlled
+            render-completion times in this test environment. Small differences
+            do not establish that one framework is inherently faster.
+          </p>
+        </article>
+        <article class="finding-card">
+          <span class="finding-number">02</span>
+          <h3>Application Size</h3>
+          <p>
+            Vanilla JavaScript had a substantially smaller measured HTML,
+            JavaScript and CSS footprint. React's production bundle includes
+            framework code and bundled dependencies.
+          </p>
+        </article>
+        <article class="finding-card">
+          <span class="finding-number">03</span>
+          <h3>Search & Caching</h3>
+          <p>
+            Repeated searches generated no observed additional iTunes search
+            requests in the collected runs, consistent with caching.
+            Live network conditions affect cold-search timings.
+          </p>
+        </article>
+      </div>
+
+      <article class="methodology-panel">
+        <h3>Methodology Notes</h3>
+        <p>
+          Benchmarks use Playwright with Chromium. Search timing includes live
+          API variability, while controlled rendering uses the same response
+          fixture for both applications. Bundle sizes compare Vanilla source
+          files with a React production build; estimated Gzip values are not
+          measured network transfers.
+        </p>
+        <p class="methodology-detail" id="run-counts"></p>
+      </article>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>iTunes Media Hub · Vanilla JavaScript vs React</span>
+      <span>Group Project · Performance Comparison Dashboard</span>
+    </div>
+  </footer>
+</body>
+</html>
